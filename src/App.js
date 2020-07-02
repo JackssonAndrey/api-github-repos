@@ -3,6 +3,13 @@ import './global.css';
 import axios from 'axios';
 import styled from 'styled-components';
 import { FiSearch, FiLink, FiArchive, FiUsers, FiMapPin } from 'react-icons/fi';
+import { Button, TextField } from '@material-ui/core';
+import Avatar from '@material-ui/core/Avatar';
+import { makeStyles, withStyles } from '@material-ui/core/styles';
+import Alert from '@material-ui/lab/Alert';
+import CloseIcon from '@material-ui/icons/Close';
+import IconButton from '@material-ui/core/IconButton';
+import Collapse from '@material-ui/core/Collapse';
 
 import imgUsuarioPadrao from './assets/unnamed.png';
 
@@ -11,6 +18,9 @@ function App() {
   const [inputPesquisa, setInputPesquisa] = useState('');
   const [dadosUsuario, setDadosUsuario] = useState({});
   const [imgUsuario, setImgUsuario] = useState(imgUsuarioPadrao);
+  const [open, setOpen] = React.useState(false);
+  const classes = useStyles();
+
   async function handlePesquisa(valor) {
     if (valor === '') {
       setRepositorios([]);
@@ -26,18 +36,56 @@ function App() {
       setDadosUsuario(responseUser);
       setImgUsuario(responseUser.avatar_url);
     } catch (error) {
-      return alert('Nenhum usuário com este nome, tente novamente!');
+      setOpen(true);
+      return;
     }
   }
 
   return (
     <Container>
       <ContainerPesquisa>
-        <Input type="search" placeholder="Insira o nome de usuário" value={inputPesquisa} onChange={e => setInputPesquisa(e.target.value)} />
-        <Button onClick={() => handlePesquisa(inputPesquisa)} >Pesquisar <FiSearch size={14} /></Button>
+        <InputPersonalizado 
+          id="standard-search" 
+          label="Insira o nome de usuário" 
+          type="search" 
+          size="small"
+          value={inputPesquisa} 
+          onChange={e => setInputPesquisa(e.target.value)}  
+        />
+        <Button 
+          variant="contained" 
+          color="default" 
+          size="medium" 
+          onClick={() => handlePesquisa(inputPesquisa)} 
+          endIcon={<FiSearch />}
+        >
+          Pesquisar
+        </Button>
       </ContainerPesquisa>
+      <ContainerAlertas>
+        <Collapse in={open}>
+          <Alert
+            severity="error"
+            action={
+              <IconButton
+                aria-label="close"
+                color="inherit"
+                size="small"
+                onClick={() => {
+                  setOpen(false);
+                }}
+              >
+                <CloseIcon fontSize="inherit" />
+              </IconButton>
+            }
+          >
+            Não foi possível encontrar o usuário, tente novamente!
+          </Alert>
+        </Collapse>
+      </ContainerAlertas>
+      
       <ContainerImg>
-        <Img src={imgUsuario} alt="Imagem usuario"/>
+        <Avatar alt="Imagem usuario" src={imgUsuario} className={classes.large} />
       </ContainerImg>
       <ContainerInfo>
         <h4>{dadosUsuario.name}</h4>
@@ -57,6 +105,26 @@ function App() {
     </Container>    
   );
 }
+
+const useStyles = makeStyles((theme) => ({
+  large: {
+    width: theme.spacing(12),
+    height: theme.spacing(12),
+  },
+}));
+
+const InputPersonalizado = withStyles({
+  root: {
+    '& label.Mui-focused': {
+      color: 'white',
+    },
+    '& .MuiInput-underline:after': {
+      borderBottomColor: 'white',
+    },
+    width: '200px',
+    marginRight: '10px',
+  }
+})(TextField);
 
 const TextInfo = styled.p`
   font-size: 1em;
@@ -103,6 +171,17 @@ const ContainerInfo = styled.div`
   text-align: center;
 `;
 
+const ContainerAlertas = styled.div`
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  width: 50%;
+  height: auto;
+  margin: auto;
+  margin-bottom: 20px;
+  text-align: center;
+`;
+
 const ContainerFooter = styled.div`
   display: flex;
   justify-content: center;
@@ -124,46 +203,19 @@ const ContainerImg = styled.div`
 `;
 
 const ContainerPesquisa = styled.div`
-  flex: 1;
-  width: 50%;
-  height: 100px;
+  display: flex;
+  justify-content: center;
+  width: 40%;
+  height: 50px;
   margin: auto;
   margin-top: 50px;
   margin-bottom: 50px;
   text-align: center;
 `;
 
-const Input = styled.input`
-  padding: 16px;
-  outline: none;
-  color: #FFF;
-  background-color: #4F4F4F;
-  border-radius: 8px;
-  border: none;
-  box-shadow: none;
-  margin: 5px;
-  width: 200px;
-`;
-
-const Button = styled.button`
-  padding: 16px;
-  outline: none;
-  width: 150px;
-  color: #FFF;
-  background-color: #4F4F4F;
-  border-radius: 8px;
-  cursor: pointer;
-  border: none;
-  margin: 5px;
-  box-shadow: none;
-  transition: opacity 0.3s;
-  &:hover {
-    opacity 0.7;
-  } 
-`;
-
 const Ul = styled.ul`
   list-style: none;
+  padding-inline-start: 0;
 `;
 
 const Li = styled.li`
@@ -173,13 +225,6 @@ const Li = styled.li`
   padding: 16px;
   border-bottom: 1px solid #4F4F4F;
   text-align: left;
-`;
-
-const Img = styled.img`
-  border: none;
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
 `;
 
 export default App;
