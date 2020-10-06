@@ -91,13 +91,18 @@ function App() {
         <h4>{dadosUsuario.name}</h4>
         <h5><a href={dadosUsuario.html_url} target="_blank" rel="noopener noreferrer">{dadosUsuario.login} <FiLink /></a></h5>
         <TextInfo>{dadosUsuario.bio}</TextInfo>
-        <TextInfo><FiArchive /> {dadosUsuario.public_repos} repositórios - <FiUsers /> {dadosUsuario.following} following . {dadosUsuario.followers} followers</TextInfo>
+        <TextInfo>
+          <FiArchive /> {dadosUsuario.public_repos} repositórios - <FiUsers /> {dadosUsuario.following} following . 
+          {dadosUsuario.followers} followers
+        </TextInfo>
         <TextInfo><FiMapPin /> {dadosUsuario.location}</TextInfo>
       </ContainerInfo>
       <ContainerLista>
         <Ul>
           {repositorios.map(repositorio => (
-            <Li key={repositorio.id}><span>{repositorio.name} - <TextBold>{repositorio.language}</TextBold></span> <a href={repositorio.html_url} target="_blank" rel="noopener noreferrer"><FiLink size={16} color="#FFF"/></a> </Li>
+            <Li key={repositorio.id}><span>{repositorio.name} - <TextBold>{repositorio.language}</TextBold></span> 
+              <a href={repositorio.html_url} target="_blank" rel="noopener noreferrer"><FiLink size={16} color="#FFF"/></a>
+            </Li>
           ))}
         </Ul>
       </ContainerLista>
